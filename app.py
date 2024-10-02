@@ -1,11 +1,14 @@
 import streamlit as st
 from transformers import pipeline, AutoModelForQuestionAnswering, AutoTokenizer
 
-# Load the pre-trained model and tokenizer
+# Load the pre-trained PyTorch model and tokenizer
 model_name = "deepset/roberta-base-squad2"
-model = TFAutoModelForQuestionAnswering.from_pretrained(model_name)
+
+# Use PyTorch AutoModel instead of TensorFlow
+model = AutoModelForQuestionAnswering.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
+# Set up the Hugging Face pipeline
 qa_pipeline = pipeline("question-answering", model=model, tokenizer=tokenizer, framework="pt")
 
 # Streamlit app layout
@@ -25,8 +28,13 @@ question = st.text_input("Ask a question:")
 # Button to get the answer
 if st.button("Get Answer"):
     if context and question:
-        result = qa_pipeline(question=question, context=context)
-        st.write("### Answer:")
-        st.write(result['answer'])
+        try:
+            # Get the answer using the Hugging Face QA pipeline
+            result = qa_pipeline(question=question, context=context)
+            st.write("### Answer:")
+            st.write(result['answer'])
+        except Exception as e:
+            # Catch any errors, including model loading or question answering
+            st.error(f"An error occurred: {str(e)}")
     else:
-        st.write("Please provide both the document and the question.")
+        st.warning("Please provide both the document and the question.")
