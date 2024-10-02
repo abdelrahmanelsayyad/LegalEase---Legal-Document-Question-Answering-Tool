@@ -1,12 +1,12 @@
 import streamlit as st
-from transformers import pipeline, TFAutoModelForQuestionAnswering, AutoTokenizer
+from transformers import pipeline, AutoModelForQuestionAnswering, AutoTokenizer
 
 # Load the pre-trained model and tokenizer
 model_name = "deepset/roberta-base-squad2"
 model = TFAutoModelForQuestionAnswering.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-qa_pipeline = pipeline("question-answering", model=model, tokenizer=tokenizer, framework="tf")
+qa_pipeline = pipeline("question-answering", model=model, tokenizer=tokenizer, framework="pt")
 
 # Streamlit app layout
 st.title("LegalEase - Legal Document Question Answering Tool")
